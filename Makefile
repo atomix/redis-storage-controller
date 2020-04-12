@@ -23,17 +23,17 @@ deps: # @HELP ensure that the required dependencies are in place
 	bash -c "diff -u <(echo -n) <(git diff go.sum)"
 
 linters: # @HELP examines Go source code and reports coding problems
-	GOGC=75 golangci-lint run
+	GOGC=50 golangci-lint run
 
 license_check: # @HELP examine and ensure license headers exist
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
 	./../build-tools/licensing/boilerplate.py -v --rootdir=${CURDIR}
 
 images: # @HELP build redis-storage Docker image
-images: build
+image: build
 	docker build . -f build/redis-storage-controller/Dockerfile -t atomix/redis-storage-controller:${ATOMIX_REDIS_CONTROLLER_VERSION}
 
-kind: images
+kind: image
 	kind load docker-image atomix/redis-storage-controller:${ATOMIX_REDIS_CONTROLLER_VERSION}
 	
 
