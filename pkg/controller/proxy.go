@@ -29,11 +29,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
-// GetProxyConfigMapName returns the ConfigMap name for the given proxy and partition
-func GetProxyConfigMapName(cluster *v1beta2.Cluster) string {
-	return getClusterResourceName(cluster, getProxyName(cluster))
-}
-
 // GetProxyDeploymentName returns the StatefulSet name for the given partition
 func GetProxyDeploymentName(cluster *v1beta2.Cluster) string {
 	return getClusterResourceName(cluster, getProxyName(cluster))
@@ -42,20 +37,6 @@ func GetProxyDeploymentName(cluster *v1beta2.Cluster) string {
 // getProxyName returns the name of the given cluster's proxy
 func getProxyName(cluster *v1beta2.Cluster) string {
 	return fmt.Sprintf("%s-proxy", cluster.Name)
-}
-
-func (r *Reconciler) reconcileProxyService(cluster *v1beta2.Cluster, storage *v1beta1.RedisStorageClass) error {
-	log.Info("Reconcile redis proxy service")
-	service := &corev1.Service{}
-	name := types.NamespacedName{
-		Namespace: cluster.Namespace,
-		Name:      cluster.Name,
-	}
-	err := r.client.Get(context.TODO(), name, service)
-	if err != nil && k8serrors.IsNotFound(err) {
-		err = r.addService(cluster, storage)
-	}
-	return err
 }
 
 func (r *Reconciler) reconcileProxyDeployment(cluster *v1beta2.Cluster, storage *v1beta1.RedisStorageClass) error {
@@ -70,33 +51,6 @@ func (r *Reconciler) reconcileProxyDeployment(cluster *v1beta2.Cluster, storage 
 		err = r.addProxyDeployment(cluster, storage)
 	}
 	return err
-}
-
-func (r *Reconciler) addProxyService(cluster *v1beta2.Cluster) error {
-	log.Info("Creating service", "Name", cluster.Name, "Namespace", cluster.Namespace)
-	service := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: cluster.Namespace,
-			Name:      cluster.Name,
-			Labels:    cluster.Labels,
-		},
-
-		Spec: corev1.ServiceSpec{
-			Ports: []corev1.ServicePort{
-				{
-					Name: "api",
-					Port: 5678,
-				},
-			},
-			PublishNotReadyAddresses: true,
-			ClusterIP:                "None",
-			Selector:                 cluster.Labels,
-		},
-	}
-	if err := controllerutil.SetControllerReference(cluster, service, r.scheme); err != nil {
-		return err
-	}
-	return r.client.Create(context.TODO(), service)
 }
 
 func (r *Reconciler) addProxyDeployment(cluster *v1beta2.Cluster, storage *v1beta1.RedisStorageClass) error {
