@@ -144,6 +144,7 @@ func (r *Reconciler) addProxyDeployment(cluster *v1beta2.Cluster, storage *v1bet
 							Name:            GetProxyDeploymentName(cluster),
 							Image:           image,
 							ImagePullPolicy: storage.Spec.Proxy.ImagePullPolicy,
+							Env:             env,
 						},
 					},
 					Volumes: volumes,

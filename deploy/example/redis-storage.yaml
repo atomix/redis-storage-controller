@@ -1,9 +1,9 @@
 apiVersion: storage.cloud.atomix.io/v1beta1
 kind: RedisStorageClass
 metadata:
-  name: redis-storage
+  name: redis-storage-node
   labels:
-    app: redis-storage
+    app: redis-storage-node
 spec:
   proxy:
       image: atomix/redis-storage-node:latest
