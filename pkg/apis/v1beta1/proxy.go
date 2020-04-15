@@ -22,7 +22,7 @@ type Proxy struct {
 	Image string `json:"image,omitempty"`
 
 	// ImagePullPolicy is the pull policy to apply
-	ImagePullPolicy corev1.PullPolicy `json:"pullPolicy,omitempty"`
+	ImagePullPolicy corev1.PullPolicy `json:"imagePullPolicy,omitempty"`
 }
 
 // ProxyStatus is the cluster proxy status

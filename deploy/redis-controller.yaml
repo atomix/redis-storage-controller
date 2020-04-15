@@ -130,7 +130,7 @@ spec:
             failureThreshold: 1
           env:
             - name: CONTROLLER_NAME
-              value: "redis-controller"
+              value: "redis-storage-controller"
             - name: CONTROLLER_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -147,7 +147,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-controller
+  name: redis-storage-controller
   namespace: kube-system
   labels:
     name: redis-storage-controller

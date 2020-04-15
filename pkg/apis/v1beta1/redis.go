@@ -33,6 +33,8 @@ type RedisStorageClassSpec struct {
 	// Proxy is the redis proxy
 	Proxy Proxy `json:"proxy,omitempty"`
 
+	Backend Backend `json:"backend,omitempty"`
+
 	RedisStorageStatus RedisStorageClassStatus `json:"redis,omitempty"`
 }
 
@@ -41,6 +43,8 @@ type RedisStorageClassStatus struct {
 
 	// Proxy is the proxy status
 	Proxy *ProxyStatus `json:"proxy,omitempty"`
+
+	Backend *BackendStatus `json:"backend,omitempty"`
 }
 
 // +kubebuilder:object:root=true

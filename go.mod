@@ -8,6 +8,7 @@ require (
 	github.com/atomix/api v0.0.0-20200211005812-591fe8b07ea8
 	github.com/atomix/kubernetes-controller v0.2.0-beta.1
 	github.com/atomix/redis-proxy v0.0.0-20200401191125-2c6c4e16fc39 // indirect
+	github.com/gogo/protobuf v1.3.1
 	google.golang.org/grpc v1.28.0
 	k8s.io/api v0.17.2
 	k8s.io/apimachinery v0.17.2

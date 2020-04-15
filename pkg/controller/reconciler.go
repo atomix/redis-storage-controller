@@ -59,7 +59,7 @@ type Reconciler struct {
 // Reconcile reads that state of the cluster for a Cluster object and makes changes based on the state read
 // and what is in the Cluster.Spec
 func (r *Reconciler) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	log.Info("Reconcile Cluster")
+	log.Info("Reconcile Redis Cluster")
 	cluster := &v1beta2.Cluster{}
 	err := r.client.Get(context.TODO(), request.NamespacedName, cluster)
 	if err != nil {
@@ -80,6 +80,41 @@ func (r *Reconciler) Reconcile(request reconcile.Request) (reconcile.Result, err
 			return reconcile.Result{}, nil
 		}
 		return reconcile.Result{Requeue: true}, err
+	}
+
+	err = r.reconcileBackendConfigMap(cluster, storage)
+	if err != nil {
+		if !k8serrors.IsAlreadyExists(err) {
+			return reconcile.Result{}, err
+		}
+
+	}
+
+	err = r.reconcileBackendHeadlessService(cluster, storage)
+	if err != nil {
+		if !k8serrors.IsAlreadyExists(err) {
+			return reconcile.Result{}, err
+		}
+	}
+
+	err = r.reconcileBackendStatefulSet(cluster, storage)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	err = r.reconcileBackendService(cluster, storage)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	err = r.reconcileProxyDeployment(cluster, storage)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
+	err = r.reconcileProxyService(cluster, storage)
+	if err != nil {
+		return reconcile.Result{}, err
 	}
 
 	return reconcile.Result{}, nil

@@ -20,6 +20,8 @@ import (
 	"os"
 	"runtime"
 
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
 	"github.com/atomix/kubernetes-controller/pkg/controller/util/leader"
 	"github.com/atomix/kubernetes-controller/pkg/controller/util/ready"
 	"github.com/atomix/redis-storage-controller/pkg/apis"
@@ -39,6 +41,7 @@ func printVersion() {
 }
 
 func main() {
+	logf.SetLogger(zap.New())
 	var namespace string
 	if len(os.Args) > 1 {
 		namespace = os.Args[1]
